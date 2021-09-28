@@ -125,4 +125,31 @@ Bind Mount: Guarda los archivos en la maquina local persistiendo y visualizando 
 Volume: Guarda los archivos en el area de Docker donde Docker los administra (Seguro).
 TMPFS Mount: Guarda los archivos temporalmente y persiste los datos en la memoria del contenedor, cuando muera sus datos mueren con el contenedor.
 
-[[]]
+[[Imagenes docker]]
+las imagenes son como clases que generan contenedores los cuales serían sus instancias
+
+$ docker image ls (veo las imágenes que tengo localmente)
+$ docker pull ubuntu:20.04 (bajo la imagen de ubuntu con una versión específica)
+
+-> docker pull <imagen>:<versión>
+
+[[Crear tus propias imagenes]]
+
+$ mkdir imagenes (creo un directorio en mi máquina)
+$ cd imagenes (entro al directorio)
+$ touch Dockerfile (creo un Dockerfile)
+$ code . (abro code en el direcotrio en el que estoy)
+
+##Contenido del Dockerfile##
+FROM ubuntu:latest
+RUN touch /ust/src/hola-platzi.txt (comando a ejecutar en tiempo de build)
+##fin##
+
+$ docker build -t ubuntu:platzi . (creo una imagen con el contexto de build <directorio>)
+$ docker run -it ubuntu:platzi (corro el contenedor con la nueva imagen)
+$ docker login (me logueo en docker hub)
+$ docker tag ubuntu:platzi miusuario/ubuntu:platzy (cambio el tag para poder subirla a mi docker hub)
+$ docker push miusuario/ubuntu:platzi (publico la imagen a mi docker hub)
+
+-> docker build -t <nombre de la imagen en la que se basara>:<tag que le daras a tu imagen> <contexto de build |.| >
+
