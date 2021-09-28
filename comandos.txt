@@ -35,4 +35,29 @@ El contenedor se apago por que el comando terminó, ya que el shell no posee nin
 -> docker run -it ubuntu { inicia el modo interactivo de docker esto hará que ubuntu trabaje como una consola}
 - ls -lac {una forma alternativa de ver los directorios}
 
+-> exit {al hacer esto el modo interactivo se cerrará y se detendrá el contenedor }
+
 [[[El ciclo de vida de un contenedor]]]
+
+cuando un contenedor se ejecuta, en realidad se hace un proceso de el sistema operativo el "Main Process" los contenedores corren siempre que su proceso principal esté corriendo
+cuándo hacemos exit apagamos el proceso principal y el contenedor se detiene
+pueden detenerse otros procesos y seguirá corriendo, el único que detendra todo es el proceso principal
+
+para evitar que se apague el contenedor tenemos que iniciar el contenedor y darle un proceso principal que nose apague
+
+-> docker run --name alwaysup -d ubuntu -f /dev/null {esto dará como resultado esto}
+
+CONTAINER ID   IMAGE     COMMAND               CREATED          STATUS          PORTS     NAMES
+e780e564148c   ubuntu    "tail -f /dev/null"   12 seconds ago   Up 11 seconds             alwaysup
+
+cuando corres un contenedor al final especificas el comando que quieres que corra
+
+-> docker run --name alwaysup -d ubuntu <el comando que quieres que corra>
+
+-> docker exec {nos permite ejecutar un proceso en un contenedor que esté corriendo}
+-> docker exec -it alwaysup bash { inicia bash en el contenedor alwaysup}
+- ps muestra los procesos en ubuntu
+- ps -aux { muestra todos los procesos de ubuntu }
+
+-> docker inspect --format '{{.State.Pid}}' alwaysup {[ muestra el id de el rpoceso principal de docker]}
+- sudo kill -9 <pid> {elimina el proceso desde tu consola principal}
