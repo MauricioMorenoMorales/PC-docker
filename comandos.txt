@@ -88,9 +88,41 @@ Con el flag follow "-f" cuándo presiones ctrl+c no cancelara el contenedor ya q
 
 -> docker logs --tail 10 -f <nombre de el contendor> { muestra solo los ultimos 10 logs }
 
-[[ Bind mounts ]]
+[[ Bind mounts ]] {Te permite que un contenedor use partes de tu sistema operativo principal}
 => Crea un contenedor con mongo y nombre db y entra a él con
 -> Docker exec -it db bash
 
--> docker run -d --name -db -v(vind) <PATH|PWD> <imagen> {Crea una ubicación para guardar los datos de mongodob un ejemplo sería }
+-> docker run -d --name -db -v(bind mount) <PATH|PWD> <imagen> {Crea una ubicación para guardar los datos de mongodob un ejemplo sería }
 -> docker run -d --name db -v /home/mauricio/Programacion/backend/docker/dockerdata/mongodata:/data/db mongo
+
+[[ Volumanes ]] {La forma más comun de compartir data}
+
+-> docker volume ls {Te muestra todos los volumenes existentes} "Al principio habŕa varios creados por default por docker"
+-> docker volume create <nombre de el volumen> { crea un volumen}
+-> docker run -d --name db --mount src=<nombre de el volumen a usar>,dst=<en donde estará montado> mongo
+-> docker run -d --name db --mount src=dbdata,dst=/data/db mongo
+con inspect puedes ver la información del contenedor en el objeto mount
+-> docker exec -it db bash
+
+
+[[ Insertar y extraer archivos dentro de un contenedor ]]
+
+no necesitas que esté corriendo el contenedor para extraer o agregar información
+
+$ touch prueba.txt (creo un archivo en mi máquina)
+$ docker run -d --name copytest ubuntu tail -f /dev/null (corron un ubuntu y le agrego el tail para que quede activo)
+$ docker exec -it copytest bash (entro al contenedor)
+$ mkdir testing (creo un directorio en el contenedor)
+$ docker cp prueba.txt copytest:/testing/test.txt (copio el archivo dentro del contenedor)
+$ docker cp copytest:/testing localtesting (copio el directorio de un contenedor a mi máquina)
+con “docker cp” no hace falta que el contenedor esté corriendo
+
+-> docker cp <origen, o archivo a copiar> <contenedor que recibirá la copia>:<directorio que recibira la copia>
+-> docker cp <contenedor de el que se copiará algo>:<directorio dentro de el contenedor> <nombre de el archivo que pondremos en nuestro OS>
+
+Host: Donde Docker esta instalado.
+Bind Mount: Guarda los archivos en la maquina local persistiendo y visualizando estos datos (No seguro).
+Volume: Guarda los archivos en el area de Docker donde Docker los administra (Seguro).
+TMPFS Mount: Guarda los archivos temporalmente y persiste los datos en la memoria del contenedor, cuando muera sus datos mueren con el contenedor.
+
+[[]]
