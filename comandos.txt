@@ -1,0 +1,38 @@
+docker --version {Ve la versión de docker}
+docker info {obten la informacion de el estado de docker}
+
+Puedes usar la página de play-with-docker para practicar
+
+cheatsheet < https://collectednotes.com/barckcode/docker-cheat-sheet >
+
+docker run { crea un contenedor y lo ejecuta }
+
+docker run hello-world { corre el contenedor llamado hello-world }
+
+-> docker ps { muestra los contenedores corriendo }
+-> docker ps -a { muestra todos los contenedores corriendo }
+-> docker inspect <id de el proceso> { muestra toda la especificacion de el contenedor }
+
+-> docker run --name <nombre personalizado> <contenedor a ejecutar> {agrega nombres personalizados a los procesos}
+-> docker rename <nombre antiguo> <number nuevo>
+
+-> docker rm <nombre de el contenedor> { Elimina un contenedor en especifico}
+-> docker container prune { elimina todos los contenedores }
+
+[[[ El modo interactivo ]]]
+
+-> docker run ubuntu {corre el sistema operativo de ubuntu pero no funcionará y se apagará }
+esto dará como respuesta algo así
+
+CONTAINER ID   IMAGE     COMMAND       CREATED          STATUS                      PORTS     NAMES
+37ec385d58b3   ubuntu    "/bin/bash"   20 seconds ago   Exited (0) 18 seconds ago             zen_heisenberg
+
+=>> COMMAND = El proceso que corre el contenedor al arrancar
+=>> STATUS = Cuándo un proceso en linux termina devuelve un codigo de salida (0) significa que todo bien, cualquier numero distinto a 0 significa error
+
+El contenedor se apago por que el comando terminó, ya que el shell no posee ninguna instruccion a hacer
+
+-> docker run -it ubuntu { inicia el modo interactivo de docker esto hará que ubuntu trabaje como una consola}
+- ls -lac {una forma alternativa de ver los directorios}
+
+[[[El ciclo de vida de un contenedor]]]
