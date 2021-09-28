@@ -61,3 +61,36 @@ cuando corres un contenedor al final especificas el comando que quieres que corr
 
 -> docker inspect --format '{{.State.Pid}}' alwaysup {[ muestra el id de el rpoceso principal de docker]}
 - sudo kill -9 <pid> {elimina el proceso desde tu consola principal}
+
+[[ Exponiendo contenedores ]] { Como acceder a contenedores por un get en HTTP }
+
+-> docker run -d --name proxy nginx [[ Corre un servidor de nginx ]]
+
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS     NAMES
+4b285549168d   nginx     "/docker-entrypoint.…"   29 seconds ago   Up 27 seconds   80/tcp    proxy
+
+=> PORTS, te muestra que el servidor corre en el puerto 80 !DENTRO DE EL CONTENEDOR
+
+-> docker stop <nombre de el contenedor> { detiene un servidor }
+-> docker rm -f <nombre de el contenedor> { detiene y elimina un contenedor }
+
+-> docker run --name <nombre> -p{publish} <puerto local>:<puerto contenedor> <nombre de la imagen> {Forma de exponer un puerto de el contenedor ejemplo abajo}
+=> docker run --name proxy -p 8080:80 nginx
+Al no agregar el "-d" tu estandard output será el de docker en este aso nginx y no será el de tu bash
+Sí sales de tu standard input presionando ctrl+c ejecutara el comando en nginx cancelandolo matando el main process y después saldrá de el proceso mandandote a tu bash
+
+El "-d" debe de estar al principio de el comando
+-> docker run -d --name proxy -p 8080:80 nginx
+
+-> docker logs <nombre de el contenedor> { te muestra los logs que ocurren dentro de el contenedor }
+-> docker logs -f{follow} <nombre de el contendor> { contecta tu bash con la terminal de dentro de el contenedor }
+Con el flag follow "-f" cuándo presiones ctrl+c no cancelara el contenedor ya que estaría cancelando el flag follow no el proceso principal
+
+-> docker logs --tail 10 -f <nombre de el contendor> { muestra solo los ultimos 10 logs }
+
+[[ Bind mounts ]]
+=> Crea un contenedor con mongo y nombre db y entra a él con
+-> Docker exec -it db bash
+
+-> docker run -d --name -db -v(vind) <PATH|PWD> <imagen> {Crea una ubicación para guardar los datos de mongodob un ejemplo sería }
+-> docker run -d --name db -v /home/mauricio/Programacion/backend/docker/dockerdata/mongodata:/data/db mongo
