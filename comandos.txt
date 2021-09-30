@@ -153,3 +153,77 @@ $ docker push miusuario/ubuntu:platzi (publico la imagen a mi docker hub)
 
 -> docker build -t <nombre de la imagen en la que se basara>:<tag que le daras a tu imagen> <contexto de build |.| >
 
+las imagenes no son más que capas
+
+cada run dentro de un docker file es una capa
+
+-> docker history ubuntu:platzi { muestra cada una de las capas }
+
+puedes usar la herramienta docker dive para poder leer mejor las capas de las imágenes
+
+-> dive ubuntu:platzi
+
+las capas van de arriba hacia abajo y son inmutables si creas algo y lo eliminas después ambos comandos siguen existiendo
+
+cuándo un contenedor corre, corren todas las capas de la imagen
+
+[[ Usando Docker para desarrollar aplicaciones ]]
+
+-> docker build -t{tag} <nombre de el tag> <contexto de build>
+->docker build -t platziapp .
+=> -t agrega el tag platziapp a el contenedor
+
+[[ Usando docker para desarrollar aplicaciones ]]
+
+$ git clone https://github.com/platzi/docker
+$ docker build platziapp . (creo la imagen local)
+$ docker image ls (listo las imagenes locales)
+$ docker run --rm -p 3000:3000 platziapp (creo el contenedor y cuando se detenga se borra, lo publica el puerto 3000)
+$ docker ps (veo los contenedores activos)
+
+-> docker run --rm -p 3000:3000 <nombre de la imagen> {El flag --rm elimina el contenedor una vez desactivado}
+
+[[Aprovechando el caché de capas para estructurar correctamente tus imágenes]]
+
+$ docker build platziapp . (creo la imagen local)
+$ docker run --rm -p 3000:3000 -v pathlocal/index.js:pathcontenedor/index.js platziapp (corro un contenedor y monto el archivo index.js para que se actualice dinámicamente con nodemon que está declarado en mi Dockerfile)
+
+Cuándo quieres volver a hacer build a un elemento docker vuelve a usar las herramientas que tenia antes para optimizar el espacio
+el problema es que cuándo haces un cambio vuelve a instalar todo para ello tienes que estructurar todo el dockerfile de la mejor manera
+
+para poder crear el contenedor una vez y que se actualice automaticamente tienes que hacer esto
+|||
+FROM node:12
+
+COPY ["package.json", "package-lock.json", "/usr/src/"]
+
+WORKDIR /usr/src
+
+RUN npm install
+
+COPY [".", "/usr/src/"]
+
+EXPOSE 3000
+
+CMD ["npx", "nodemon", "index.js]"
+|/|
+
+con el bindmount puedes tener tus archivos corriendo en tu computadora hacer cambios y en el contenedor todo se guardará
+
+-> docker run --rm -p 3000:3000 -v /home/mauricio/Programacion/backend/docker/docker/usr/src platziapp
+
+[[Comunicacion entre distintos contenedores]] {docker networking}
+$ docker network ls (listo las redes)
+$ docker network create --atachable plazinet (creo la red)
+$ docker inspect plazinet (veo toda la definición de la red creada)
+$ docker run -d --name db mongo (creo el contenedor de la BBDD)
+$ docker network connect plazinet db (conecto el contenedor “db” a la red “platzinet”)
+$ docker run -d -name app -p 3000:3000 --env MONGO_URL=mondodb://db:27017/test platzi (corro el contenedor “app” y le paso una variable)
+$ docker network connect plazinet app (conecto el contenedor “app” a la red “plazinet”)
+
+-> docker network ls {muestra las redes}
+-> docker network create --atachable <nombre de la red> (creo la red)
+-> docker network inspect <nombre de la red> {ve la información de la network}
+$ docker network connect <network> <contenedor> (conecto el contenedor “db” a la red “platzinet”)
+$ docker run -d -name app -p 3000:3000 --env MONGO_URL=mondodb://db:27017/test platziapp {corro el contenedor platziapp con el nombre app en el puerto 3000 y le agrego a el entorno de desarrollo la variable para conectar la base de datos}
+=> MONGO_URL=mongodb://<el nombre de el contenedor>:<puerto de el contenedor>
