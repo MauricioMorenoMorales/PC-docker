@@ -227,3 +227,25 @@ $ docker network connect plazinet app (conecto el contenedor “app” a la red 
 $ docker network connect <network> <contenedor> (conecto el contenedor “db” a la red “platzinet”)
 $ docker run -d -name app -p 3000:3000 --env MONGO_URL=mondodb://db:27017/test platziapp {corro el contenedor platziapp con el nombre app en el puerto 3000 y le agrego a el entorno de desarrollo la variable para conectar la base de datos}
 => MONGO_URL=mongodb://<el nombre de el contenedor>:<puerto de el contenedor>
+
+[[ Docker-compose]]
+
+version: "3.8" =>> Versión de el compose file obligatorio
+
+services: =>> Los servicios que componen la aplicación osea cada uno de los componentes de la app aquí hay dos servicios app y db
+  app: => generará el contenedor app
+    image: platziapp => usará la imágen platziapp<imagen creada>
+    environment: => creas las variables de entorno que usarás
+      MONGO_URL: "mongodb://db:27017/test"
+    depends_on: => este contenedor dependrá de el otro componente, por lo tanto tiene que ser creado antes el contenedor db
+      - db
+    ports: => Los puertos que usará el servicio
+      - "3000:3000"
+
+  db:
+    image: mongo
+
+=> Para ejecutar el archivo yml {docker compose} tienes que correr el comando
+-> docker-compose up
+o
+-> docker-compose up -d

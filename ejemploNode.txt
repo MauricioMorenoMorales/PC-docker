@@ -1,0 +1,62 @@
+############################################################
+# Dockerfile para configurar aplicación en node.js - Express
+############################################################
+
+# Establece la imagen base
+-> FROM node
+
+# Crear directorio de trabajo
+-> RUN mkdir -p /opt/app
+
+# Se estable el directorio de trabajo
+-> WORKDIR /opt/app
+
+# Instala los paquetes existentes en el package.json
+-> COPY ./project/package.json .
+
+-> RUN npm install --quiet
+
+# Copia la Aplicación
+-> COPY ./project/. .
+
+# Instalación de Nodemon en forma Global
+# Al realizarse cambios reiniciar el servidor
+-> RUN npm install nodemon -g --quiet
+
+# Expone la aplicación en el puerto 8000
+-> EXPOSE 8000
+
+# Inicia la aplicación al iniciar al contenedor
+-> CMD nodemon -L --watch . app.js
+
+version: '3.7'
+services:
+
+  web:
+    container_name: node
+    build: .
+    depends_on:
+      - mongo
+    restart: always
+    ports:
+      - 3000:3000
+      - 8000:8000
+    volumes:
+      - /Users/miruta/Developer/curse-node/node-mongo/project:/opt/app
+    networks:
+      - redinterna
+
+  mongo:
+    container_name: mongo
+    image: bitnami/mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - /Users/miruta/Developer/curse-node/node-mongo/mongodata:/bitnami
+    networks:
+      - redinterna
+
+networks:
+  redinterna:
+    driver: bridge```
